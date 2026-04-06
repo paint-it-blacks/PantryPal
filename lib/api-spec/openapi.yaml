@@ -130,7 +130,7 @@ components:
         name:
           type: string
         quantity:
-          type: integer
+          type: number
         unit:
           type: string
         location:
@@ -157,7 +157,7 @@ components:
           minLength: 1
           maxLength: 100
         quantity:
-          type: integer
+          type: number
           minimum: 0
           default: 1
         unit:
@@ -176,7 +176,7 @@ components:
       type: object
       properties:
         quantity:
-          type: integer
+          type: number
           minimum: 0
         name:
           type: string

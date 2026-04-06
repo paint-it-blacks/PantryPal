@@ -1,0 +1,155 @@
+Update the existing PantryPal browser app to proto v3.
+
+Please preserve the current working behavior and UI as much as possible, especially:
+	•	the location-based divided sections
+	•	the add item flow
+	•	the large mobile-friendly quantity buttons
+	•	the current grouped layout and simple UX
+
+Proto v3 goals:
+	1.	Support decimal quantities
+	2.	Add step-based increment/decrement controls
+	3.	Ensure old data is not broken
+	4.	Add CSV import/export for future safety and backup
+
+⸻
+
+	1.	Decimal quantity support
+
+⸻
+
+Right now the app only accepts whole numbers.
+Update it so quantities can also be decimal values.
+
+Examples:
+	•	0.1
+	•	0.5
+	•	1
+	•	2.25
+	•	10.5
+
+Requirements:
+	•	Quantity input and storage must support decimals
+	•	Increment and decrement operations must support decimals
+	•	Prevent negative values
+	•	Avoid floating point display bugs such as 0.30000000004
+	•	Format values cleanly for display
+	•	Keep the experience simple and mobile-friendly
+
+Implementation preference:
+	•	Either round safely to a fixed precision for storage/display
+	•	Or use another safe method so decimal math behaves correctly
+
+⸻
+
+	2.	Step-based increment/decrement controls
+
+⸻
+
+Add a step selector above the existing large quantity buttons.
+
+Design concept:
+A row of small preset buttons above the large action buttons:
+
+[0.1] [0.5] [1] [5] [10]
+
+|                              |
+|              +               |
+|                              |
+
+And the same logic should also apply to the large minus button.
+
+Behavior:
+	•	The user selects a step value from the preset row
+	•	Then pressing the large + button increases quantity by that selected step
+	•	Pressing the large - button decreases quantity by that selected step
+	•	Default selected step should be 1
+	•	The selected step should be visually highlighted
+	•	The step selector should be easy to tap on mobile
+	•	Keep the existing large-button feel and mobile-first UX
+
+Requirements:
+	•	Keep the large + and - buttons
+	•	Add the step selector above them
+	•	Selected step applies to both + and - buttons
+	•	Step buttons should be simple, compact, and visually clear
+	•	The UI should still feel like “open → tap once → done”
+
+⸻
+
+	3.	Backward compatibility / existing data safety
+
+⸻
+
+This update must not break existing stored data.
+
+Important requirement:
+	•	For all existing entries that do not currently have attribute_location, default them to:
+attribute_location = "undefined"
+
+Please handle this safely in the data model and rendering logic.
+
+Requirements:
+	•	Existing entries must continue to load correctly
+	•	Entries without attribute_location must not disappear or crash grouping logic
+	•	These entries should appear under a location section labeled undefined
+	•	Future entries should still support normal free-text locations as already implemented
+
+⸻
+
+	4.	CSV import/export
+
+⸻
+
+Add a simple CSV import/export feature for backup, migration, and future safety.
+
+Export requirements:
+	•	Add an “Export CSV” action/button
+	•	Export all inventory entries to a CSV file
+	•	Include all relevant fields, including:
+	•	name
+	•	amount
+	•	unit
+	•	attribute_location
+
+Import requirements:
+	•	Add an “Import CSV” action/button
+	•	Allow the user to upload a CSV file and import entries
+	•	Imported rows should create or update inventory entries safely
+	•	Imported locations should still work with dynamic section creation
+	•	Location values should remain case-insensitive for grouping
+	•	Missing attribute_location values from imported CSV rows should default to undefined
+
+CSV behavior requirements:
+	•	Keep the format simple and human-readable
+	•	Validate rows safely
+	•	Do not crash on malformed or partial CSV rows
+	•	If a row is invalid, skip it or report it clearly without breaking the rest of the import
+
+⸻
+
+General implementation guidance
+
+Please keep the current app architecture as intact as possible and refactor only where needed.
+
+Important rules:
+	•	Do not remove the existing grouped-by-location layout
+	•	Do not remove the current add item functionality
+	•	Do not overcomplicate the interface
+	•	Do not add authentication
+	•	Do not add analytics
+	•	Do not add dashboards
+	•	Do not add AI features
+
+Priority order:
+	1.	Decimal support
+	2.	Step selector above the large + / - buttons
+	3.	Backward compatibility for missing attribute_location
+	4.	CSV import/export
+
+Technical notes:
+	•	Quantities should be stored and displayed in a way that handles decimal math safely
+	•	Grouping by location should continue to use case-insensitive logic
+	•	Existing entries missing attribute_location must safely fall into the undefined section
+
+The result should feel like a natural upgrade of the current PantryPal app, not a redesign.

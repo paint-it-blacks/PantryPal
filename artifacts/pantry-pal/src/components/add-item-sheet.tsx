@@ -37,7 +37,7 @@ const formSchema = z.object({
   name: z.string().min(1, "Name is required").max(100),
   quantity: z.coerce.number().min(0),
   unit: z.string().max(30).optional().default("pcs"),
-  location: z.string().min(1, "Location is required").max(100).default("Pantry"),
+  location: z.string().max(100).optional().default("Pantry"),
 });
 
 export function AddItemSheet() {
@@ -60,9 +60,9 @@ export function AddItemSheet() {
       {
         data: {
           name: values.name,
-          quantity: values.quantity,
+          quantity: Math.round(values.quantity * 100000) / 100000,
           unit: values.unit || "pcs",
-          location: values.location || "Pantry",
+          location: values.location?.trim() || "undefined",
         },
       },
       {
@@ -144,6 +144,8 @@ export function AddItemSheet() {
                     <FormControl>
                       <Input
                         type="number"
+                        step="any"
+                        min="0"
                         className="h-12 text-lg bg-muted/30 border-muted"
                         {...field}
                       />
