@@ -4,20 +4,28 @@ import { AddItemSheet } from "@/components/add-item-sheet";
 import { PackageOpen, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-const LOCATION_ORDER = [
-  "Fridge",
-  "Freezer",
-  "Pantry",
-  "Kitchen Shelf",
-  "Bathroom",
-  "Laundry Area",
-  "Other",
+const LOCATION_ORDER_KEYS = [
+  "fridge",
+  "freezer",
+  "pantry",
+  "kitchen shelf",
+  "bathroom",
+  "laundry area",
+  "other",
 ];
 
-function sortLocations(locations: string[]): string[] {
-  return [...locations].sort((a, b) => {
-    const ai = LOCATION_ORDER.indexOf(a);
-    const bi = LOCATION_ORDER.indexOf(b);
+function normalizeKey(location: string): string {
+  return location.trim().toLowerCase();
+}
+
+function toDisplayName(raw: string): string {
+  return raw.trim().replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+function sortLocationKeys(keys: string[]): string[] {
+  return [...keys].sort((a, b) => {
+    const ai = LOCATION_ORDER_KEYS.indexOf(a);
+    const bi = LOCATION_ORDER_KEYS.indexOf(b);
     if (ai === -1 && bi === -1) return a.localeCompare(b);
     if (ai === -1) return 1;
     if (bi === -1) return -1;
@@ -28,16 +36,21 @@ function sortLocations(locations: string[]): string[] {
 export default function Home() {
   const { data: items, isLoading, isError } = useListItems();
 
-  const grouped = items
-    ? items.reduce<Record<string, typeof items>>((acc, item) => {
-        const loc = item.location || "Other";
-        if (!acc[loc]) acc[loc] = [];
-        acc[loc].push(item);
-        return acc;
-      }, {})
-    : {};
+  type GroupedItems = Record<string, { displayName: string; items: NonNullable<typeof items> }>;
 
-  const sortedLocations = sortLocations(Object.keys(grouped));
+  const grouped: GroupedItems = {};
+  if (items) {
+    for (const item of items) {
+      const raw = item.location?.trim() || "Other";
+      const key = normalizeKey(raw);
+      if (!grouped[key]) {
+        grouped[key] = { displayName: toDisplayName(raw), items: [] };
+      }
+      grouped[key].items.push(item);
+    }
+  }
+
+  const sortedKeys = sortLocationKeys(Object.keys(grouped));
 
   return (
     <div className="min-h-[100dvh] w-full bg-background flex flex-col items-center">
@@ -78,9 +91,9 @@ export default function Home() {
 
           {!isLoading && !isError && items && items.length > 0 && (
             <AnimatePresence mode="popLayout">
-              {sortedLocations.map((location, locIndex) => (
+              {sortedKeys.map((key, locIndex) => (
                 <motion.section
-                  key={location}
+                  key={key}
                   initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: locIndex * 0.04 }}
@@ -89,10 +102,10 @@ export default function Home() {
                     <hr className="border-border my-6" />
                   )}
                   <h2 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3 px-1">
-                    {location}
+                    {grouped[key].displayName}
                   </h2>
                   <div className="flex flex-col gap-3">
-                    {grouped[location].map((item) => (
+                    {grouped[key].items.map((item) => (
                       <ItemCard key={item.id} item={item} />
                     ))}
                   </div>

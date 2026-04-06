@@ -35,11 +35,11 @@ router.post("/items", async (req, res) => {
     res.status(400).json({ error: parsed.error.message });
     return;
   }
-  const { name, quantity = 1, unit = "pcs" } = parsed.data;
+  const { name, quantity = 1, unit = "pcs", location = "Pantry" } = parsed.data;
   try {
     const [item] = await db
       .insert(itemsTable)
-      .values({ name, quantity, unit })
+      .values({ name, quantity, unit, location })
       .returning();
     res.status(201).json({
       ...item,

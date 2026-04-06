@@ -1,0 +1,39 @@
+Fix a bug in the PantryPal browser app.
+
+The current location divider UI and add item UI both look good and function well. The location attribute also looks correct from the user side.
+
+The bug is in how attribute_location is handled internally:
+	•	right now it only works when the location matches an exact existing string
+	•	if there is any variation, exception, or unrecognized value, the new item defaults to attribute_location = Pantry
+
+This is NOT the intended behavior.
+
+Intended behavior:
+	•	every unique new string entered for attribute_location should be accepted as a valid new location
+	•	when a new unique location is added, a new divided section should automatically be created in the list for that location
+	•	items with the same location should appear in the same section
+	•	location matching should be case-insensitive
+
+Examples:
+	•	Fridge, fridge, and FRIDGE should all be treated as the same location group
+	•	if the user enters a brand new location like Bathroom Cabinet, the app should create a new location section for it instead of defaulting to Pantry
+
+Required fix:
+	1.	Remove the fallback behavior that sends unknown or mismatched locations to Pantry
+	2.	Normalize attribute_location in a case-insensitive way when grouping
+	3.	Preserve a clean display value for the section title, such as using the first entered version or a normalized title case version
+	4.	When a new item is added with a new location string, automatically create a new grouped section for that location
+	5.	Existing items with equivalent case-insensitive location values should be grouped together in one section
+
+Implementation guidance:
+	•	treat location grouping by a normalized key such as trimmed lowercase text
+	•	do not require exact string matching against a predefined list
+	•	allow free text locations
+	•	group dynamically based on the item data itself
+
+Important:
+	•	do not break the current add item flow
+	•	do not remove the current divider-based grouped layout
+	•	keep the current simple mobile-friendly UX
+
+Please update the code so that location sections are data-driven and dynamically created from unique case-insensitive attribute_location values, instead of relying on exact string matching or defaulting to Pantry.
