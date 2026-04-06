@@ -14,3 +14,76 @@ import * as zod from "zod";
 export const HealthCheckResponse = zod.object({
   status: zod.string(),
 });
+
+/**
+ * Returns all pantry items sorted by most recently updated
+ * @summary List all pantry items
+ */
+export const ListItemsResponseItem = zod.object({
+  id: zod.number(),
+  name: zod.string(),
+  quantity: zod.number(),
+  unit: zod.string(),
+  updatedAt: zod.coerce.date(),
+  createdAt: zod.coerce.date(),
+});
+export const ListItemsResponse = zod.array(ListItemsResponseItem);
+
+/**
+ * @summary Create a new pantry item
+ */
+export const createItemBodyNameMax = 100;
+
+export const createItemBodyQuantityDefault = 1;
+export const createItemBodyQuantityMin = 0;
+
+export const createItemBodyUnitDefault = `pcs`;
+export const createItemBodyUnitMax = 30;
+
+export const CreateItemBody = zod.object({
+  name: zod.string().min(1).max(createItemBodyNameMax),
+  quantity: zod
+    .number()
+    .min(createItemBodyQuantityMin)
+    .default(createItemBodyQuantityDefault),
+  unit: zod
+    .string()
+    .min(1)
+    .max(createItemBodyUnitMax)
+    .default(createItemBodyUnitDefault),
+});
+
+/**
+ * @summary Update a pantry item's quantity
+ */
+export const UpdateItemParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const updateItemBodyQuantityMin = 0;
+
+export const updateItemBodyNameMax = 100;
+
+export const updateItemBodyUnitMax = 30;
+
+export const UpdateItemBody = zod.object({
+  quantity: zod.number().min(updateItemBodyQuantityMin).optional(),
+  name: zod.string().min(1).max(updateItemBodyNameMax).optional(),
+  unit: zod.string().min(1).max(updateItemBodyUnitMax).optional(),
+});
+
+export const UpdateItemResponse = zod.object({
+  id: zod.number(),
+  name: zod.string(),
+  quantity: zod.number(),
+  unit: zod.string(),
+  updatedAt: zod.coerce.date(),
+  createdAt: zod.coerce.date(),
+});
+
+/**
+ * @summary Delete a pantry item
+ */
+export const DeleteItemParams = zod.object({
+  id: zod.coerce.number(),
+});

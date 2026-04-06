@@ -8,3 +8,46 @@
 export interface HealthStatus {
   status: string;
 }
+
+export interface Item {
+  id: number;
+  name: string;
+  quantity: number;
+  unit: string;
+  updatedAt: string;
+  createdAt: string;
+}
+
+export interface CreateItemBody {
+  /**
+   * @minLength 1
+   * @maxLength 100
+   */
+  name: string;
+  /** @minimum 0 */
+  quantity?: number;
+  /**
+   * @minLength 1
+   * @maxLength 30
+   */
+  unit?: string;
+}
+
+export interface UpdateItemBody {
+  /** @minimum 0 */
+  quantity?: number;
+  /**
+   * @minLength 1
+   * @maxLength 100
+   */
+  name?: string;
+  /**
+   * @minLength 1
+   * @maxLength 30
+   */
+  unit?: string;
+}
+
+export interface ErrorResponse {
+  error: string;
+}

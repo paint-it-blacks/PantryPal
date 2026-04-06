@@ -10,6 +10,8 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: items
+    description: Pantry item operations
 paths:
   /healthz:
     get:
@@ -24,6 +26,93 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /items:
+    get:
+      operationId: listItems
+      tags: [items]
+      summary: List all pantry items
+      description: Returns all pantry items sorted by most recently updated
+      responses:
+        "200":
+          description: List of items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Item"
+    post:
+      operationId: createItem
+      tags: [items]
+      summary: Create a new pantry item
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateItemBody"
+      responses:
+        "201":
+          description: Item created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Item"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /items/{id}:
+    patch:
+      operationId: updateItem
+      tags: [items]
+      summary: Update a pantry item's quantity
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateItemBody"
+      responses:
+        "200":
+          description: Item updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Item"
+        "404":
+          description: Item not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      operationId: deleteItem
+      tags: [items]
+      summary: Delete a pantry item
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Item deleted
+        "404":
+          description: Item not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
 components:
   schemas:
     HealthStatus:
@@ -33,4 +122,66 @@ components:
           type: string
       required:
         - status
-
+    Item:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        quantity:
+          type: integer
+        unit:
+          type: string
+        updatedAt:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - quantity
+        - unit
+        - updatedAt
+        - createdAt
+    CreateItemBody:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        quantity:
+          type: integer
+          minimum: 0
+          default: 1
+        unit:
+          type: string
+          minLength: 1
+          maxLength: 30
+          default: pcs
+      required:
+        - name
+    UpdateItemBody:
+      type: object
+      properties:
+        quantity:
+          type: integer
+          minimum: 0
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        unit:
+          type: string
+          minLength: 1
+          maxLength: 30
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error

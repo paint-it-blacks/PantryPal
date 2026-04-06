@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "PantryPal"
+version = "1.0.0"
+id = "artifacts/pantry-pal"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 25193
+
+[services.development]
+run = "pnpm --filter @workspace/pantry-pal run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/pantry-pal", "run", "build" ]
+publicDir = "artifacts/pantry-pal/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "25193"
+BASE_PATH = "/"

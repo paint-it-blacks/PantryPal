@@ -6,4 +6,8 @@
  * OpenAPI spec version: 0.1.0
  */
 
+export * from "./createItemBody";
+export * from "./errorResponse";
 export * from "./healthStatus";
+export * from "./item";
+export * from "./updateItemBody";
