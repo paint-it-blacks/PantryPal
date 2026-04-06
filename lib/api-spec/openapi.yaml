@@ -133,6 +133,8 @@ components:
           type: integer
         unit:
           type: string
+        location:
+          type: string
         updatedAt:
           type: string
           format: date-time
@@ -144,6 +146,7 @@ components:
         - name
         - quantity
         - unit
+        - location
         - updatedAt
         - createdAt
     CreateItemBody:
@@ -162,6 +165,11 @@ components:
           minLength: 1
           maxLength: 30
           default: pcs
+        location:
+          type: string
+          minLength: 1
+          maxLength: 100
+          default: Pantry
       required:
         - name
     UpdateItemBody:
@@ -178,6 +186,10 @@ components:
           type: string
           minLength: 1
           maxLength: 30
+        location:
+          type: string
+          minLength: 1
+          maxLength: 100
     ErrorResponse:
       type: object
       properties:

@@ -24,6 +24,7 @@ export const ListItemsResponseItem = zod.object({
   name: zod.string(),
   quantity: zod.number(),
   unit: zod.string(),
+  location: zod.string(),
   updatedAt: zod.coerce.date(),
   createdAt: zod.coerce.date(),
 });
@@ -40,6 +41,9 @@ export const createItemBodyQuantityMin = 0;
 export const createItemBodyUnitDefault = `pcs`;
 export const createItemBodyUnitMax = 30;
 
+export const createItemBodyLocationDefault = `Pantry`;
+export const createItemBodyLocationMax = 100;
+
 export const CreateItemBody = zod.object({
   name: zod.string().min(1).max(createItemBodyNameMax),
   quantity: zod
@@ -51,6 +55,11 @@ export const CreateItemBody = zod.object({
     .min(1)
     .max(createItemBodyUnitMax)
     .default(createItemBodyUnitDefault),
+  location: zod
+    .string()
+    .min(1)
+    .max(createItemBodyLocationMax)
+    .default(createItemBodyLocationDefault),
 });
 
 /**
@@ -66,10 +75,13 @@ export const updateItemBodyNameMax = 100;
 
 export const updateItemBodyUnitMax = 30;
 
+export const updateItemBodyLocationMax = 100;
+
 export const UpdateItemBody = zod.object({
   quantity: zod.number().min(updateItemBodyQuantityMin).optional(),
   name: zod.string().min(1).max(updateItemBodyNameMax).optional(),
   unit: zod.string().min(1).max(updateItemBodyUnitMax).optional(),
+  location: zod.string().min(1).max(updateItemBodyLocationMax).optional(),
 });
 
 export const UpdateItemResponse = zod.object({
@@ -77,6 +89,7 @@ export const UpdateItemResponse = zod.object({
   name: zod.string(),
   quantity: zod.number(),
   unit: zod.string(),
+  location: zod.string(),
   updatedAt: zod.coerce.date(),
   createdAt: zod.coerce.date(),
 });

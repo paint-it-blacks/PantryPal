@@ -7,6 +7,7 @@ export const itemsTable = pgTable("items", {
   name: text("name").notNull(),
   quantity: integer("quantity").notNull().default(1),
   unit: text("unit").notNull().default("pcs"),
+  location: text("location").notNull().default("Pantry"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });

@@ -14,6 +14,7 @@ export interface Item {
   name: string;
   quantity: number;
   unit: string;
+  location: string;
   updatedAt: string;
   createdAt: string;
 }
@@ -31,6 +32,11 @@ export interface CreateItemBody {
    * @maxLength 30
    */
   unit?: string;
+  /**
+   * @minLength 1
+   * @maxLength 100
+   */
+  location?: string;
 }
 
 export interface UpdateItemBody {
@@ -46,6 +52,11 @@ export interface UpdateItemBody {
    * @maxLength 30
    */
   unit?: string;
+  /**
+   * @minLength 1
+   * @maxLength 100
+   */
+  location?: string;
 }
 
 export interface ErrorResponse {

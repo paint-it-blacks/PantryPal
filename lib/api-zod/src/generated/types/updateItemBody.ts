@@ -19,4 +19,9 @@ export interface UpdateItemBody {
    * @maxLength 30
    */
   unit?: string;
+  /**
+   * @minLength 1
+   * @maxLength 100
+   */
+  location?: string;
 }

@@ -23,10 +23,21 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
+const LOCATION_PRESETS = [
+  "Fridge",
+  "Freezer",
+  "Pantry",
+  "Kitchen Shelf",
+  "Bathroom",
+  "Laundry Area",
+  "Other",
+];
+
 const formSchema = z.object({
   name: z.string().min(1, "Name is required").max(100),
   quantity: z.coerce.number().min(0),
   unit: z.string().max(30).optional().default("pcs"),
+  location: z.string().min(1, "Location is required").max(100).default("Pantry"),
 });
 
 export function AddItemSheet() {
@@ -40,30 +51,35 @@ export function AddItemSheet() {
       name: "",
       quantity: 1,
       unit: "pcs",
+      location: "Pantry",
     },
   });
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    createItem.mutate({
-      data: {
-        name: values.name,
-        quantity: values.quantity,
-        unit: values.unit || "pcs",
+    createItem.mutate(
+      {
+        data: {
+          name: values.name,
+          quantity: values.quantity,
+          unit: values.unit || "pcs",
+          location: values.location || "Pantry",
+        },
+      },
+      {
+        onSuccess: () => {
+          setOpen(false);
+          form.reset();
+          queryClient.invalidateQueries({ queryKey: getListItemsQueryKey() });
+        },
       }
-    }, {
-      onSuccess: () => {
-        setOpen(false);
-        form.reset();
-        queryClient.invalidateQueries({ queryKey: getListItemsQueryKey() });
-      }
-    });
+    );
   };
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button 
-          size="lg" 
+        <Button
+          size="lg"
           className="fixed bottom-6 right-6 h-16 w-16 rounded-full shadow-lg shadow-primary/20 p-0 z-50 transition-transform hover:scale-105"
         >
           <Plus className="h-8 w-8" />
@@ -75,7 +91,7 @@ export function AddItemSheet() {
         </SheetHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
             <FormField
               control={form.control}
               name="name"
@@ -83,13 +99,41 @@ export function AddItemSheet() {
                 <FormItem>
                   <FormLabel className="text-muted-foreground">What do you have?</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g. Flour, Eggs, Coffee beans" className="h-12 text-lg bg-muted/30 border-muted" {...field} />
+                    <Input
+                      placeholder="e.g. Flour, Eggs, Coffee beans"
+                      className="h-12 text-lg bg-muted/30 border-muted"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            
+
+            <FormField
+              control={form.control}
+              name="location"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-muted-foreground">Where is it?</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Fridge, Pantry, Bathroom..."
+                      className="h-12 text-lg bg-muted/30 border-muted"
+                      list="location-presets"
+                      {...field}
+                    />
+                  </FormControl>
+                  <datalist id="location-presets">
+                    {LOCATION_PRESETS.map((loc) => (
+                      <option key={loc} value={loc} />
+                    ))}
+                  </datalist>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <div className="flex gap-4">
               <FormField
                 control={form.control}
@@ -98,7 +142,11 @@ export function AddItemSheet() {
                   <FormItem className="flex-1">
                     <FormLabel className="text-muted-foreground">Amount</FormLabel>
                     <FormControl>
-                      <Input type="number" className="h-12 text-lg bg-muted/30 border-muted" {...field} />
+                      <Input
+                        type="number"
+                        className="h-12 text-lg bg-muted/30 border-muted"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -111,7 +159,11 @@ export function AddItemSheet() {
                   <FormItem className="flex-1">
                     <FormLabel className="text-muted-foreground">Unit</FormLabel>
                     <FormControl>
-                      <Input placeholder="pcs, kg, bags" className="h-12 text-lg bg-muted/30 border-muted" {...field} />
+                      <Input
+                        placeholder="pcs, kg, bags"
+                        className="h-12 text-lg bg-muted/30 border-muted"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -119,7 +171,11 @@ export function AddItemSheet() {
               />
             </div>
 
-            <Button type="submit" className="w-full h-14 text-lg font-medium mt-4" disabled={createItem.isPending}>
+            <Button
+              type="submit"
+              className="w-full h-14 text-lg font-medium"
+              disabled={createItem.isPending}
+            >
               {createItem.isPending ? "Adding..." : "Add to Pantry"}
             </Button>
           </form>

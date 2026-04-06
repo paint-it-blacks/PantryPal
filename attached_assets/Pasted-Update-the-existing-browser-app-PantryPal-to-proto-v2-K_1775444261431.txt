@@ -1,0 +1,71 @@
+Update the existing browser app "PantryPal" to proto v2.
+
+Keep the current app structure and working features, especially:
+- the ability to add new items/entities
+- the current attributes: name, amount, unit
+- the simple and mobile-friendly interaction style
+
+Now add a new attribute:
+- location
+
+Each item should now have:
+- name
+- amount
+- unit
+- location
+
+Main new behavior:
+Group the inventory list by location.
+
+Examples of locations:
+- Fridge
+- Freezer
+- Pantry
+- Kitchen Shelf
+- Bathroom
+- Laundry Area
+
+UI requirements for grouping:
+- Show a clear location header for each group
+- Separate each location section with a simple horizontal divider line, like:
+  --------------------
+- The design should stay minimal and clean
+- Do not use complex containers or heavy visual clutter
+- The divider should make the list feel naturally segmented
+
+Behavior requirements:
+1. When a user adds a new item, they must also choose or enter a location
+2. Items should appear under the correct location section
+3. If multiple items share the same location, they should be grouped together
+4. If an item’s location is changed later, it should move to the correct section
+5. Keep the large +1 / -1 buttons and current quantity behavior
+6. Prevent amount from going below 0
+
+Interaction / UX:
+- Mobile-first
+- Fast and easy to scan visually
+- Grouping should make it easier to browse “what is in each place”
+- The app should still feel like “open → tap once → done”
+
+Implementation preference:
+- Reuse as much of the current code as possible
+- Refactor only where needed
+- Keep the app simple and lightweight
+
+Nice-to-have if easy:
+- Sort locations in a stable order, such as:
+  Fridge, Freezer, Pantry, Kitchen Shelf, Bathroom, Laundry Area, Other
+- If a location does not yet exist, allow custom text input
+- Show the location in the add-item form as either a dropdown or free text input
+
+Do NOT add:
+- authentication
+- analytics
+- barcode scanning
+- dashboards
+- AI features
+
+This is proto v2, so prioritize:
+1. adding the location attribute
+2. grouping the list by location
+3. preserving the simple fast UX

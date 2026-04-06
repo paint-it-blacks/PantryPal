@@ -11,6 +11,7 @@ export interface Item {
   name: string;
   quantity: number;
   unit: string;
+  location: string;
   updatedAt: Date;
   createdAt: Date;
 }
